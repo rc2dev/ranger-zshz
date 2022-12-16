@@ -1,9 +1,10 @@
 import ranger.api
 from os import getenv
+from os.path import isfile
 from subprocess import Popen, PIPE
 
 hook_init_prev = ranger.api.hook_init
-zshz_src = getenv("ZSHZ_SRC")
+zshz_src = getenv("ZSHZ_SRC", "")
 
 
 def hook_init(fm):
@@ -12,10 +13,12 @@ def hook_init(fm):
         Popen(["zsh", "-c", cmd])
 
     fm.signal_bind("cd", z_add)
+
     return hook_init_prev(fm)
 
 
-ranger.api.hook_init = hook_init
+if isfile(zshz_src):
+    ranger.api.hook_init = hook_init
 
 
 class z(ranger.api.commands.Command):
@@ -26,6 +29,10 @@ class z(ranger.api.commands.Command):
     """
 
     def execute(self):
+        if not isfile(zshz_src):
+            self.fm.notify("Can't find ZSHZ_SRC.", bad=True)
+            return None
+
         cmd = f"source {zshz_src} && zshz -e {' '.join(self.args[1:])}"
         proc = Popen(["zsh", "-c", cmd], stdout=PIPE)
         stdout, stderr = proc.communicate()
