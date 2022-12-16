@@ -5,7 +5,7 @@ A plugin to integrate [zsh-z](https://github.com/agkozak/zsh-z) into [ranger](ht
 ## How it works
 
 - Every directory you visit in ranger is automatically added to your zsh-z database.
-- Type `:z foobar` to jump to directory matching `foobar`.
+- Type `:z foobar` to jump to directory matching `foobar`. Use `TAB` to cycle completions.
 
 ## Installation
 

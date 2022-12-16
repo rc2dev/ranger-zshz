@@ -42,3 +42,17 @@ class z(ranger.api.commands.Command):
 
         dir = stdout.decode("utf-8").strip()
         self.fm.cd(dir)
+
+    def tab(self, tabnum):
+        if not isfile(zshz_src):
+            return None
+
+        cmd = f"source {zshz_src} && zshz --complete {' '.join(self.args[1:])}"
+        proc = Popen(["zsh", "-c", cmd], stdout=PIPE)
+        stdout, stderr = proc.communicate()
+
+        if proc.returncode != 0:  # not found
+            return None
+
+        paths = stdout.decode("utf-8").strip().splitlines()
+        return [f"z {path}" for path in paths]
