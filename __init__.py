@@ -1,10 +1,21 @@
 import ranger.api
+from ranger.ext.get_executables import get_executables
 from os import getenv
 from os.path import isfile
 from subprocess import Popen, PIPE
 
 hook_init_prev = ranger.api.hook_init
 zshz_src = getenv("ZSHZ_SRC", "")
+
+
+def get_missing_dep():
+    if "zsh" not in get_executables():
+        return "zsh"
+
+    if not isfile(zshz_src):
+        return "ZSHZ_SRC"
+
+    return None
 
 
 def hook_init(fm):
@@ -17,7 +28,7 @@ def hook_init(fm):
     return hook_init_prev(fm)
 
 
-if isfile(zshz_src):
+if get_missing_dep() is None:
     ranger.api.hook_init = hook_init
 
 
@@ -29,8 +40,9 @@ class z(ranger.api.commands.Command):
     """
 
     def execute(self):
-        if not isfile(zshz_src):
-            self.fm.notify("Can't find ZSHZ_SRC.", bad=True)
+        dep = get_missing_dep()
+        if dep is not None:
+            self.fm.notify(f"Can't find {dep}.", bad=True)
             return None
 
         cmd = f"source {zshz_src} && zshz -e {' '.join(self.args[1:])}"
