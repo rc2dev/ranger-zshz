@@ -1,11 +1,11 @@
 import ranger.api
 from ranger.ext.get_executables import get_executables
 from os import getenv
-from os.path import isfile
+from os.path import isfile, expanduser
 from subprocess import Popen, PIPE
 
 hook_init_prev = ranger.api.hook_init
-zshz_src = getenv("ZSHZ_SRC", "")
+zshz_src = expanduser(getenv("ZSHZ_SRC", ""))
 
 
 def get_missing_dep():
