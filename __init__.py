@@ -5,8 +5,7 @@ from os.path import isfile, expanduser
 from subprocess import Popen, PIPE
 
 hook_init_prev = ranger.api.hook_init
-# Fallback to ohmyzsh's plugins path as it's a popular framework.
-zshz_src = expanduser(getenv("ZSHZ_SRC", "~/.oh-my-zsh/plugins/z/z.plugin.zsh"))
+zshz_src = expanduser(getenv("ZSHZ_SRC", ""))
 
 
 def get_missing_dep():
